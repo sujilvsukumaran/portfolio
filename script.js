@@ -3,25 +3,35 @@ document.addEventListener('DOMContentLoaded', function() {
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / 400, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ antialias: true });
-
-    // Log to ensure renderer is created
-    console.log('Renderer:', renderer);
-
-    // Set renderer size
     renderer.setSize(window.innerWidth, 400);
     document.getElementById('cube-container').appendChild(renderer.domElement);
 
-    // Create a cube
-    const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    const cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
+    // Add lighting
+    const ambientLight = new THREE.AmbientLight(0x404040, 2); // Soft white light
+    scene.add(ambientLight);
 
-    // Log to ensure cube is created and added to scene
-    console.log('Cube:', cube);
-    console.log('Scene:', scene);
+    const pointLight = new THREE.PointLight(0xffffff, 1);
+    pointLight.position.set(10, 10, 10);
+    scene.add(pointLight);
 
-    // Set camera position
+    // Load the FBX model
+    const loader = new THREE.FBXLoader();
+    loader.load('assets/models/test.fbx', function(object) {
+        scene.add(object);
+        object.position.set(0, 0, 0); // Adjust the position if needed
+        object.scale.set(0.1, 0.1, 0.1); // Adjust the scale if needed
+
+        // Log materials and textures
+        object.traverse(function(child) {
+            if (child.isMesh) {
+                console.log(child.material);
+            }
+        });
+
+    }, undefined, function(error) {
+        console.error(error);
+    });
+
     camera.position.z = 5;
 
     // Animation loop
@@ -34,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Rotation logic
     let isDragging = false;
     let previousMousePosition = { x: 0, y: 0 };
+    let rotationSpeed = { x: 0, y: 0 };
 
     renderer.domElement.addEventListener('mousedown', function(e) {
         isDragging = true;
@@ -50,8 +61,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 y: e.offsetY - previousMousePosition.y
             };
 
-            cube.rotation.y += deltaMove.x * 0.01;
-            cube.rotation.x += deltaMove.y * 0.01;
+            rotationSpeed.y = deltaMove.x * 0.01;
+            rotationSpeed.x = deltaMove.y * 0.01;
 
             previousMousePosition = {
                 x: e.offsetX,
@@ -63,12 +74,29 @@ document.addEventListener('DOMContentLoaded', function() {
     renderer.domElement.addEventListener('mouseup', function() {
         isDragging = false;
     });
-
     renderer.domElement.addEventListener('mouseleave', function() {
         isDragging = false;
     });
 
-    // Adjust camera aspect ratio and renderer size on window resize
+    function rotateModel() {
+        if (!isDragging) {
+            scene.rotation.y += rotationSpeed.y;
+            scene.rotation.x += rotationSpeed.x;
+
+            // Slow down the rotation over time (damping)
+            rotationSpeed.x *= 0.95;
+            rotationSpeed.y *= 0.95;
+        }
+    }
+
+// Update loop
+    function update() {
+        requestAnimationFrame(update);
+        rotateModel();
+    }
+    update();
+
+// Adjust camera aspect ratio and renderer size on window resize
     window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / 400;
         camera.updateProjectionMatrix();
