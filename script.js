@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Load the FBX model
     const loader = new THREE.FBXLoader();
-    loader.load('assets/models/your-model.fbx', function(object) {
+    loader.load('assets/models/test.fbx', function(object) {
         scene.add(object);
         object.position.set(0, 0, 0); // Adjust the position if needed
         object.scale.set(0.1, 0.1, 0.1); // Adjust the scale if needed
