@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Load the FBX model
     const loader = new THREE.FBXLoader();
-    loader.load('assets/models/test.fbx', function(object) {
+    loader.load('assets/models/your-model.fbx', function(object) {
         scene.add(object);
         object.position.set(0, 0, 0); // Adjust the position if needed
         object.scale.set(0.1, 0.1, 0.1); // Adjust the scale if needed
@@ -74,6 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
     renderer.domElement.addEventListener('mouseup', function() {
         isDragging = false;
     });
+
     renderer.domElement.addEventListener('mouseleave', function() {
         isDragging = false;
     });
@@ -89,14 +90,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-// Update loop
+    // Update loop
     function update() {
         requestAnimationFrame(update);
         rotateModel();
     }
     update();
 
-// Adjust camera aspect ratio and renderer size on window resize
+    // Adjust camera aspect ratio and renderer size on window resize
     window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / 400;
         camera.updateProjectionMatrix();
