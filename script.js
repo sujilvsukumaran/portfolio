@@ -1,18 +1,20 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Create scene, camera, and renderer
     const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xf0f0f0); // Set a light background color
+
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / 400, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, 400);
     document.getElementById('cube-container').appendChild(renderer.domElement);
 
     // Add lighting
-    const ambientLight = new THREE.AmbientLight(0x404040, 2); // Soft white light
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6); // Soft white light
     scene.add(ambientLight);
 
-    const pointLight = new THREE.PointLight(0xffffff, 2); // Increased intensity
-    pointLight.position.set(10, 10, 10);
-    scene.add(pointLight);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8); // Directional light
+    directionalLight.position.set(5, 10, 7.5);
+    scene.add(directionalLight);
 
     // Load the FBX model
     const loader = new THREE.FBXLoader();
@@ -22,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
         model = object;
         scene.add(model);
         model.position.set(0, 0, 0); // Adjust the position if needed
-        model.scale.set(0.01, 0.01, 0.01); // Adjust the scale if needed
+        model.scale.set(0.1, 0.1, 0.1); // Adjust the scale if needed
 
         // Log materials and textures
         model.traverse(function(child) {
@@ -39,8 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error('An error happened', error);
     });
 
-    camera.position.set(0, 1, 50); // Adjust the camera position
-    camera.lookAt(0, 0, 0); // Ensure the camera is looking at the center of the scene
+    camera.position.z = 5;
 
     // Animation loop
     function animate() {
@@ -111,6 +112,24 @@ document.addEventListener('DOMContentLoaded', function() {
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, 400);
     });
+
+    // Add control panel for dynamic adjustments
+    const controls = document.createElement('div');
+    controls.innerHTML = `
+        <h3>Controls</h3>
+        <label for="scale">Scale:</label>
+        <input type="range" id="scale" name="scale" min="0.01" max="2" step="0.01" value="0.1">
+        <br>
+        <label for="position-x">Position X:</label>
+        <input type="range" id="position-x" name="position-x" min="-10" max="10" step="0.1" value="0">
+        <br>
+        <label for="position-y">Position Y:</label>
+        <input type="range" id="position-y" name="position-y" min="-10" max="10" step="0.1" value="0">
+        <br>
+        <label for="position-z">Position Z:</label>
+        <input type="range" id="position-z" name="position-z" min="-10" max="10" step="0.1" value="0">
+    `;
+    document.getElementById('cube-container').appendChild(controls);
 
     // Event listeners for input changes
     document.getElementById('scale').addEventListener('input', function(event) {
