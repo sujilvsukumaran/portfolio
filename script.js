@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error('An error happened', error);
     });
 
-    camera.position.set(0, 1, 5); // Adjust the camera position
+    camera.position.set(0, 1, 50); // Adjust the camera position
     camera.lookAt(0, 0, 0); // Ensure the camera is looking at the center of the scene
 
     // Animation loop
