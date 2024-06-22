@@ -3,6 +3,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / 400, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ antialias: true });
+
+    // Log to ensure renderer is created
+    console.log('Renderer:', renderer);
+
+    // Set renderer size
     renderer.setSize(window.innerWidth, 400);
     document.getElementById('cube-container').appendChild(renderer.domElement);
 
@@ -12,13 +17,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const cube = new THREE.Mesh(geometry, material);
     scene.add(cube);
 
-    camera.position.z = 5;
-
-    // Log to ensure everything is set up correctly
-    console.log('Scene:', scene);
-    console.log('Camera:', camera);
-    console.log('Renderer:', renderer);
+    // Log to ensure cube is created and added to scene
     console.log('Cube:', cube);
+    console.log('Scene:', scene);
+
+    // Set camera position
+    camera.position.z = 5;
 
     // Animation loop
     function animate() {
@@ -62,5 +66,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     renderer.domElement.addEventListener('mouseleave', function() {
         isDragging = false;
+    });
+
+    // Adjust camera aspect ratio and renderer size on window resize
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / 400;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, 400);
     });
 });
